@@ -24,7 +24,7 @@ CFLAGS = $(C_OPTIMISATION_FLAGS) $(C_INC_FLAGS)
 LDFLAGS = $(C_OPTIMISATION_FLAGS) $(C_INC_FLAGS)
 
 # -- Final product ----------
-PRODUCT   = SortieDeCache.exe
+PRODUCT   = test.exe
 
 # -- src and obj List ----------
 SRC = $(addprefix ${SRC_PATH}/, $(FILE))
@@ -41,3 +41,4 @@ $(EXE_PATH)/$(PRODUCT): $(OBJ)
 # -- Cleanup ----------
 clean:
 	rm -f $(OBJ)
+	rm -f $(PRODUCT)

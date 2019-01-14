@@ -3,9 +3,6 @@
 #include <iostream>
 #include <float.h>
 
-// #define iter 20000000
-// #define height 100
-
 int main(int argc, char* argv[]) {
     unsigned long int size = atoi(argv[1]);
     unsigned long int height = atoi(argv[2]);
