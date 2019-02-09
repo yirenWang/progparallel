@@ -5,7 +5,6 @@
 # -- File list ----------
 FILE = main.cpp
 
-
 # -- Paths ----------
 SRC_PATH = src
 OBJ_PATH = obj

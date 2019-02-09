@@ -1,0 +1,7 @@
+.bash_history
+.vscode
+*/.ipynb_checkpoints
+*.sh
+*.out
+*.o
+*.exe
