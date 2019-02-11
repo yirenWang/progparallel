@@ -15,7 +15,18 @@ INC_PATH = include
 CC = g++
 
 # -- Flags ----------
-C_OPTIMISATION_FLAGS = -O3 -std=c++17 -g -mavx
+# PAS DE VECTORISATION -----
+# C_OPTIMISATION_FLAGS = -O2 -std=c++11 -march=native -fno-tree-vectorize 
+
+# VECTORISATION INVISIBLE
+# C_OPTIMISATION_FLAGS = -O3 -std=c++11 -march=native
+
+# VECTORISATION FORCEE
+# C_OPTIMISATION_FLAGS = -O3 -std=c++11 -march=native -ftree-vectorize -fopt-info
+
+
+# -- Flags ----------
+C_OPTIMISATION_FLAGS = -O3 -std=c++11 -g -mavx
 
 C_INC_FLAGS = -I$(INC_PATH)
 
