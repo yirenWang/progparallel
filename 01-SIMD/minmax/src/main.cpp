@@ -75,48 +75,57 @@ int main(int argc, char *argv[])
     {
         min_simd = FLT_MAX;
         max_simd = FLT_MIN;
-        __m256 local_min = _mm256_setr_ps(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
-        __m256 local_max = _mm256_setr_ps(FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN, FLT_MIN);
+        __m256 local_min = _mm256_set1_ps(FLT_MAX);
+        __m256 local_max = _mm256_set1_ps(FLT_MIN);
 
         t0_simd = std::chrono::high_resolution_clock::now();
 
         // each simd vector is size 8, we need to split the original vecteur into the appropriate size
         for (int i = 0; i < size / 8; i++)
         {
-            __m256 a = _mm256_setr_ps(A[i * 8], A[i * 8 + 1], A[i * 8 + 2], A[i * 8 + 3], A[i * 8 + 4], A[i * 8 + 5], A[i * 8 + 6], A[i * 8 + 7]);
+            __m256 a = _mm256_loadu_ps(&A[i * 8]);
             // minimum term by term of the two vectors.
-            __m256 local_min = _mm256_min_ps(a, local_min);
-            __m256 local_max = _mm256_max_ps(a, local_max);
+            local_min = _mm256_min_ps(a, local_min);
+            local_max = _mm256_max_ps(a, local_max);
         }
 
-        // retrieve final max and min vector
+        // store the mm256 into an array and iterate over it to find the max and the min
 
-        float *min_vec = (float *)malloc(size * sizeof(float));
-        float *max_vec = (float *)malloc(size * sizeof(float));
-        // mettre le resultat dans le vecteur global
+        float *min_vec = (float *)malloc(8 * sizeof(float));
+        float *max_vec = (float *)malloc(8 * sizeof(float));
         _mm256_storeu_ps((float *)(min_vec), local_min);
         _mm256_storeu_ps((float *)(max_vec), local_max);
 
+        // iteration
+        for(int i=0; i<8; i++)
+        {
+            if (min_vec[i] < min_simd)
+            {
+                min_simd = min_vec[i];
+            }
+
+            if (max_vec[i] > max_simd)
+            {
+                max_simd = max_vec[i];
+            }
+        }
         t1_simd = std::chrono::high_resolution_clock::now();
         double duration_simd = std::chrono::duration<double>(t1 - t0).count();
         if (duration_simd < min_duration_simd)
             min_duration_simd = duration_simd;
     }
 
+
     // std::cout << "Total Time " << "cpp :" << std::endl;
     float ops = size;
     std::cout << size << " " << (min_duration / ops) << std::endl;
     std::cout << size << " " << (min_duration_simd / ops) << std::endl;
 
-    std::cout << S << std::endl;
-    std::cout << S_simd << std::endl;
-    // if (S != S_simd)
-    // {
-    //     std::cout << S << std::endl;
-    //     std::cout << S_simd << std::endl;
-    // }
-    free(A);
-    free(B);
+    std::cout << "max simd " << max_simd << std::endl;
+    std::cout << "min simd " << min_simd << std::endl;
+    std::cout << "max " << max << std::endl;
+    std::cout << "min " << min << std::endl;
 
+    free(A);
     return 0;
 }
