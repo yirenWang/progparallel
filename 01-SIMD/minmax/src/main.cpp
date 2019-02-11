@@ -94,8 +94,8 @@ int main(int argc, char *argv[])
         float *min_vec = (float *)malloc(size * sizeof(float));
         float *max_vec = (float *)malloc(size * sizeof(float));
         // mettre le resultat dans le vecteur global
-        _mm256_storeu_ps((float *)(local_max), max_vec);
-        _mm256_storeu_ps((float *)(local_max), min_vec);
+        _mm256_storeu_ps((float *)(min_vec), local_min);
+        _mm256_storeu_ps((float *)(max_vec), local_max);
 
         t1_simd = std::chrono::high_resolution_clock::now();
         double duration_simd = std::chrono::duration<double>(t1 - t0).count();
