@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         }
 
         t1 = std::chrono::high_resolution_clock::now();
-        double duration = std::chrono::duration<double>(t1 - t0).count();
+        double duration = std::chrono::duration<double>(t1_simd - t0_simd).count();
         if (duration < min_duration)
             min_duration = duration;
     }
@@ -68,12 +68,12 @@ int main(int argc, char *argv[])
         S_simd = 0;
         t0_simd = std::chrono::high_resolution_clock::now();
 
-        __m256 s = _mm256_setr_ps(0, 0, 0, 0, 0, 0, 0, 0);
+        __m256 s = _mm256_set1_ps(0);
         // each simd vector is size 8, we need to split the original vecteur into the appropriate size
         for (int i = 0; i < size / 8; i++)
         {
-            __m256 a = _mm256_setr_ps(A[i * 8], A[i * 8 + 1], A[i * 8 + 2], A[i * 8 + 3], A[i * 8 + 4], A[i * 8 + 5], A[i * 8 + 6], A[i * 8 + 7]);
-            __m256 b = _mm256_setr_ps(B[i * 8], B[i * 8 + 1], B[i * 8 + 2], B[i * 8 + 3], B[i * 8 + 4], B[i * 8 + 5], B[i * 8 + 6], B[i * 8 + 7]);
+            __m256 a = _mm256_loadu_ps(&A[i * 8]);
+            __m256 b = _mm256_loadu_ps(&B[i * 8]);
             // multiple a and b (third term is a mask to specify how the answer is given)
             __m256 res = _mm256_dp_ps(a, b, 255);
             // add the resulting simd vector to the sum simd vector
@@ -95,8 +95,9 @@ int main(int argc, char *argv[])
 
     // std::cout << "Total Time " << "cpp :" << std::endl;
     float ops = size;
-    std::cout << size << " " << (min_duration / ops) << std::endl;
-    std::cout << size << " " << (min_duration_simd / ops) << std::endl;
+    std::cout << "size : " << size << std::endl;
+    std::cout << "temps scalaire " << (min_duration / ops) << std::endl;
+    std::cout << "temps vectoriel " << (min_duration_simd / ops) << std::endl;
 
     std::cout << S << std::endl;
     std::cout << S_simd << std::endl;

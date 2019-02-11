@@ -21,20 +21,15 @@ int main(int argc, char *argv[])
 
     srand(time(NULL));
 
-    // Création des données de travail (moyenne 3 vecteurs)
-    float *A, *B, *C, *M, *M_simd;
+    // Création des données de travail (filtrage gaussien de A)
+    float *A, *S;
     A = (float *)malloc(size * sizeof(float));
-    B = (float *)malloc(size * sizeof(float));
-    C = (float *)malloc(size * sizeof(float));
-    M = (float *)malloc(size * sizeof(float));
-    M_simd = (float *)malloc(size * sizeof(float));
+    S = (float *)malloc(size * sizeof(float));
 
     // remplir les vecteur avec des float aleatoire
     for (unsigned long i = 0; i < size; i++)
     {
         A[i] = (float)(rand() % 360 - 180.0);
-        B[i] = (float)(rand() % 360 - 180.0);
-        C[i] = (float)(rand() % 360 - 180.0);
     }
 
     // define the timers
@@ -50,12 +45,11 @@ int main(int argc, char *argv[])
     // normal calculation
     for (auto it = 0; it < iter; it++)
     {
-        t0 = std::chrono::high_resolution_clock::now();
-
-        for (unsigned long j = 0; j < size; j++)
-        {
-            M[j] = (A[j] + B[j] + C[j]) / 3;
+        S[0] = (2 * A[0] + A[1]) / 4;
+        for (unsigned long j = 1; j < size-1; j++) {
+            S[j] = (A[j-1] + 2*A[j] + A[j+1]) / 4;
         }
+        S[size-1] = (2 * A[size-1] + A[size-2]) / 4;
 
         t1 = std::chrono::high_resolution_clock::now();
         double duration = std::chrono::duration<double>(t1 - t0).count();
@@ -68,25 +62,36 @@ int main(int argc, char *argv[])
     {
         t0_simd = std::chrono::high_resolution_clock::now();
 
-        // each simd vector is size 8, we need to split the original vecteur into the appropriate size
-        for (int i = 0; i < size / 8; i++)
-        {
-            __m256 a = _mm256_setr_ps(A[i * 8], A[i * 8 + 1], A[i * 8 + 2], A[i * 8 + 3], A[i * 8 + 4], A[i * 8 + 5], A[i * 8 + 6], A[i * 8 + 7]);
-            __m256 b = _mm256_setr_ps(B[i * 8], B[i * 8 + 1], B[i * 8 + 2], B[i * 8 + 3], B[i * 8 + 4], B[i * 8 + 5], B[i * 8 + 6], B[i * 8 + 7]);
-            __m256 c = _mm256_setr_ps(C[i * 8], C[i * 8 + 1], C[i * 8 + 2], C[i * 8 + 3], C[i * 8 + 4], C[i * 8 + 5], C[i * 8 + 6], C[i * 8 + 7]);
-            // add a and b to m
-            __m256 m = _mm256_add_ps(a, b);
-            // add c and m to m
-            m = _mm256_add_ps(m, c);
-            // set a variable to 3 (we would like to divide by 3 for the average)
-            a = _mm256_set1_ps(3);
-            // division
-            m = _mm256_div_ps(m, a);
+        __m256 two = _mm256_set1_ps(2.0);
+        __m256 four = _mm256_set1_ps(4.0);
 
-            // mettre le resultat dans le vecteur global
-            _mm256_storeu_ps((float *)(M_simd + (i * 8)), m);
+        __m256 a0 = _mm256_loadu_ps(A);
+        __m256 b0 = _mm256_loadu_ps(A+1);
+        __m256 c0 = _mm256_set_ps(A[6], A[5], A[4], A[3], A[2], A[1], A[0], 0);
+
+        // ( c0 + 2a0 + b0 ) / 4
+        __m256 gauss0 = _mm256_div_ps(_mm256_add_ps(_mm256_add_ps(b0, _mm256_mul_ps(two, a0)), c0), four);
+        _mm256_storeu_ps(S, gauss0);
+
+        for (unsigned long j = 8; j < size; j+=8) {            
+            __m256 a = _mm256_loadu_ps(A+j);
+            __m256 b = _mm256_loadu_ps(A+j+1);
+            __m256 c = _mm256_loadu_ps(A+j-1);
+            
+            // ( c + 2a + b ) / 4
+            __m256 gauss = _mm256_div_ps(_mm256_add_ps(_mm256_add_ps(b, _mm256_mul_ps(two, a)), c), four);
+            _mm256_storeu_ps(S+j, gauss);
         }
+
+        __m256 af = _mm256_loadu_ps(A+size-8);
+        __m256 bf = _mm256_set_ps(0, A[size-1], A[size-2], A[size-3], A[size-4], A[size-5], A[size-6], A[size-7]);
+        __m256 cf = _mm256_loadu_ps(A+size-9);
+
+        __m256 gaussf = _mm256_div_ps(_mm256_add_ps(_mm256_add_ps(bf, _mm256_mul_ps(two, af)), cf), four);
+        _mm256_storeu_ps(S+size-8, gaussf);
+
         t1_simd = std::chrono::high_resolution_clock::now();
+
         double duration_simd = std::chrono::duration<double>(t1_simd - t0_simd).count();
         if (duration_simd < min_duration_simd)
             min_duration_simd = duration_simd;
@@ -98,22 +103,8 @@ int main(int argc, char *argv[])
     std::cout << "temps scalaire " << (min_duration / ops) << std::endl;
     std::cout << "temps vectoriel " << (min_duration_simd / ops) << std::endl;
 
-    /* validation */
-    bool valid = true;
-    for (int i = 0; i < size; i++)
-    {
-        if (M[i] != M_simd[i])
-        {
-            valid = false;
-        }
-    }
-    std::cout << "The result is" << valid << std::endl;
-
-
     free(A);
-    free(B);
-    free(C);
-    free(M);
+    free(S);
 
     return 0;
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <float.h>
 #include <immintrin.h>
+#include <math.h>
 
 void print_vector(float *v, int size)
 {
@@ -21,13 +22,11 @@ int main(int argc, char *argv[])
 
     srand(time(NULL));
 
-    // Création des données de travail (minimum et maximum de A)
-    float *A;
+    // Création des données de travail (valeur abs de A)
+    float *A, *S, *S_simd;
     A = (float *)malloc(size * sizeof(float));
-    float min;
-    float min_simd;
-    float max;
-    float max_simd;
+    S = (float *)malloc(size * sizeof(float));
+    S_simd = (float *)malloc(size * sizeof(float));
 
     // remplir les vecteur avec des float aleatoire
     for (unsigned long i = 0; i < size; i++)
@@ -48,20 +47,9 @@ int main(int argc, char *argv[])
     // normal calculation
     for (auto it = 0; it < iter; it++)
     {
-        min = FLT_MAX;
-        max = FLT_MIN;
         t0 = std::chrono::high_resolution_clock::now();
-
-        for (unsigned long j = 0; j < size; j++)
-        {
-            if (min > A[j])
-            {
-                min = A[j];
-            }
-            if (max < A[j])
-            {
-                max = A[j];
-            }
+        for (unsigned long j = 0; j < size-1; j++) {
+            S[j] = fabsf(A[j]);
         }
 
         t1 = std::chrono::high_resolution_clock::now();
@@ -73,59 +61,40 @@ int main(int argc, char *argv[])
     // SIMD calculation
     for (auto it = 0; it < iter; it++)
     {
-        min_simd = FLT_MAX;
-        max_simd = FLT_MIN;
-        __m256 local_min = _mm256_set1_ps(FLT_MAX);
-        __m256 local_max = _mm256_set1_ps(FLT_MIN);
-
         t0_simd = std::chrono::high_resolution_clock::now();
+        __m256 zero = _mm256_set1_ps(0.0);
+        for (unsigned long j = 0; j < size; j+=8) {            
+            __m256 a = _mm256_loadu_ps(A+j);
+            __m256 b = _mm256_sub_ps(zero, a);
 
-        // each simd vector is size 8, we need to split the original vecteur into the appropriate size
-        for (int i = 0; i < size / 8; i++)
-        {
-            __m256 a = _mm256_loadu_ps(&A[i * 8]);
-            // minimum term by term of the two vectors.
-            local_min = _mm256_min_ps(a, local_min);
-            local_max = _mm256_max_ps(a, local_max);
+            _mm256_storeu_ps(S_simd+j, _mm256_max_ps(a, b));
         }
 
-        // store the mm256 into an array and iterate over it to find the max and the min
-
-        float *min_vec = (float *)malloc(8 * sizeof(float));
-        float *max_vec = (float *)malloc(8 * sizeof(float));
-        _mm256_storeu_ps((float *)(min_vec), local_min);
-        _mm256_storeu_ps((float *)(max_vec), local_max);
-
-        // iteration
-        for(int i=0; i<8; i++)
-        {
-            if (min_vec[i] < min_simd)
-            {
-                min_simd = min_vec[i];
-            }
-
-            if (max_vec[i] > max_simd)
-            {
-                max_simd = max_vec[i];
-            }
-        }
         t1_simd = std::chrono::high_resolution_clock::now();
+
         double duration_simd = std::chrono::duration<double>(t1_simd - t0_simd).count();
         if (duration_simd < min_duration_simd)
             min_duration_simd = duration_simd;
     }
 
+    /* validation */
+    bool valid = true;
+    for (int i = 0; i < size; i++)
+    {
+        if (S[i] != S_simd[i])
+        {
+            valid = false;
+        }
+    }
 
     // std::cout << "Total Time " << "cpp :" << std::endl;
     float ops = size;
-    std::cout << size << " " << (min_duration / ops) << std::endl;
-    std::cout << size << " " << (min_duration_simd / ops) << std::endl;
-
-    std::cout << "max simd " << max_simd << std::endl;
-    std::cout << "min simd " << min_simd << std::endl;
-    std::cout << "max " << max << std::endl;
-    std::cout << "min " << min << std::endl;
+    std::cout << "size : " << size << std::endl;
+    std::cout << "temps scalaire " << (min_duration / ops) << std::endl;
+    std::cout << "temps vectoriel " << (min_duration_simd / ops) << std::endl;
 
     free(A);
+    free(S);
+
     return 0;
 }

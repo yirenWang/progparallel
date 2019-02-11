@@ -16,13 +16,13 @@ CC = g++
 
 # -- Flags ----------
 # PAS DE VECTORISATION -----
-C_OPTIMISATION_FLAGS = -O0 -std=c++11 -march=native -fno-tree-vectorize 
+# C_OPTIMISATION_FLAGS = -O2 -std=c++11 -march=native -fno-tree-vectorize 
 
 # VECTORISATION INVISIBLE
 # C_OPTIMISATION_FLAGS = -O3 -std=c++11 -march=native
 
 # VECTORISATION FORCEE
-# C_OPTIMISATION_FLAGS = -O3 -std=c++11 -march=native -ftree-vectorize -fopt-info
+C_OPTIMISATION_FLAGS = -O3 -std=c++11 -march=native -ftree-vectorize -fopt-info
 
 
 # -- Flags ----------
