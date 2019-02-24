@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         _mm256_storeu_ps((float *)(max_vec), local_max);
 
         // iteration
-        for(int i=0; i<8; i++)
+        for (int i = 0; i < 8; i++)
         {
             if (min_vec[i] < min_simd)
             {
@@ -115,11 +115,10 @@ int main(int argc, char *argv[])
             min_duration_simd = duration_simd;
     }
 
-
     // std::cout << "Total Time " << "cpp :" << std::endl;
     float ops = size;
-    std::cout << size << " " << (min_duration / ops) << std::endl;
-    std::cout << size << " " << (min_duration_simd / ops) << std::endl;
+    std::cout << "Temps scalaire : " << (min_duration / ops) << std::endl;
+    std::cout << "Temps vectorielle : " << (min_duration_simd / ops) << std::endl;
 
     std::cout << "max simd " << max_simd << std::endl;
     std::cout << "min simd " << min_simd << std::endl;

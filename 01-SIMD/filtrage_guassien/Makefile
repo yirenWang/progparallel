@@ -16,7 +16,7 @@ CC = g++
 
 # -- Flags ----------
 # PAS DE VECTORISATION -----
-# C_OPTIMISATION_FLAGS = -O2 -std=c++11 -march=native -fno-tree-vectorize 
+# C_OPTIMISATION_FLAGS = -O2 -std=c++11 -march=native -fno-tree-vectorize -mavx
 
 # VECTORISATION INVISIBLE
 # C_OPTIMISATION_FLAGS = -O3 -std=c++11 -march=native

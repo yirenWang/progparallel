@@ -101,6 +101,15 @@ int main(int argc, char *argv[])
 
     std::cout << S << std::endl;
     std::cout << S_simd << std::endl;
+
+    if (S != S_simd)
+    {
+        std::cout << "The result is not coherent" << std::endl;
+    }
+    else
+    {
+        std::cout << "The result is coherent" << std::endl;
+    }
     // if (S != S_simd)
     // {
     //     std::cout << S << std::endl;

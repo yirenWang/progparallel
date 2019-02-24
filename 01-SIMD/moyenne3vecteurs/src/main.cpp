@@ -69,11 +69,11 @@ int main(int argc, char *argv[])
         t0_simd = std::chrono::high_resolution_clock::now();
 
         // each simd vector is size 8, we need to split the original vecteur into the appropriate size
-        for (int i = 0; i < size / 8; i++)
+        for (int i = 0; i < size; i += 8)
         {
-            __m256 a = _mm256_setr_ps(A[i * 8], A[i * 8 + 1], A[i * 8 + 2], A[i * 8 + 3], A[i * 8 + 4], A[i * 8 + 5], A[i * 8 + 6], A[i * 8 + 7]);
-            __m256 b = _mm256_setr_ps(B[i * 8], B[i * 8 + 1], B[i * 8 + 2], B[i * 8 + 3], B[i * 8 + 4], B[i * 8 + 5], B[i * 8 + 6], B[i * 8 + 7]);
-            __m256 c = _mm256_setr_ps(C[i * 8], C[i * 8 + 1], C[i * 8 + 2], C[i * 8 + 3], C[i * 8 + 4], C[i * 8 + 5], C[i * 8 + 6], C[i * 8 + 7]);
+            __m256 a = _mm256_loadu_ps(&A[i]); // loads the values starting from A[i] into the m256
+            __m256 b = _mm256_loadu_ps(&B[i]);
+            __m256 c = _mm256_loadu_ps(&C[i]);
             // add a and b to m
             __m256 m = _mm256_add_ps(a, b);
             // add c and m to m
@@ -107,8 +107,14 @@ int main(int argc, char *argv[])
             valid = false;
         }
     }
-    std::cout << "The result is" << valid << std::endl;
-
+    if (!valid)
+    {
+        std::cout << "The result is not coherent" << std::endl;
+    }
+    else
+    {
+        std::cout << "The result is coherent" << std::endl;
+    }
 
     free(A);
     free(B);

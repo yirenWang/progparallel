@@ -131,4 +131,5 @@ Time taken to calculate : 0.000986
 
 */
 
-// It takes longer to fill the vectors in parallel. It probably indicates a shared resource. There is an
+// It takes longer to fill the vectors in parallel. It probably indicates a shared resource.
+// There is a gain of 41% in parallel
