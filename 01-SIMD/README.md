@@ -383,3 +383,6 @@ size : 1048576
 temps scalaire 6.3992e-10
 temps vectoriel 6.56035e-10
 ```
+
+**Results:**
+We would expect that the vectorial calculations will take less time than the scalar calculations. However, this is not always the case. There is often a lot of overhead to transform the scalars to a vectorized format. Perhaps with vectors of a bigger size, the difference in time would be more apparent ?
