@@ -26,19 +26,29 @@ Makefile flags
 
 `fopt-info` more verbose for the vectorisation.
 
+#### Initialisation :
+
+To use the SIMD functions, we would need to import `<immintrin.h>`.
+
 ####Link to documentation :
 `https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm256_loadu_ps&expand=3377`
 
-####Useful Functions :
-`_mm256_loadu_ps(&A[i])` : loads the values starting from A[i] into the m256
-`_mm256_add_ps(a, b)` : adds two `__m256` vectors
-`_mm256_storeu_ps` : stores the `__m256` vector into a normal array.
-`_mm256_dp_ps` : computes the dot product for two `__m256` vectors. The third term is a mask to specify how the answer is given. (0000 0000) The first 4 bits indicates which elements are taken into account for the dot product (1111, means you multiply and add everything). The last 4 bits indicate where the results are stored. It returns a `__m256` vector.(X,X,X,X,Y,Y,Y,Y). X is the dot product for the first 4 values of the `__m256` and Y for the last 4. To get the total dot product, you need to add `X` and `Y`.
+####SIMD Functions :
+
+- `_mm256_loadu_ps(&A[i])` : loads the values starting from A[i] into the m256
+- `_mm256_add_ps(a, b)` : adds two `__m256` vectors
+- `_mm256_storeu_ps` : stores the `__m256` vector into a normal array.
+- `_mm256_dp_ps` : computes the dot product for two `__m256` vectors. The third term is a mask to specify how the answer is given. (0000 0000) The first 4 bits indicates which elements are taken into account for the dot product (1111, means you multiply and add everything). The last 4 bits indicate where the results are stored. It returns a `__m256` vector.(X,X,X,X,Y,Y,Y,Y). X is the dot product for the first 4 values of the `__m256` and Y for the last 4. To get the total dot product, you need to add `X` and `Y`.
 
 #### Notes:
 
 - Remember to free the allocated space for the vectors.
 - Absorption : $10^7 + 10^-7 - 10^7 \neq 10^7 - 10^7 + 10^-7$
+- Define timers with
+
+```C++
+std::chrono::high_resolution_clock::time_point t0 = std::chrono::high_resolution_clock::now();
+```
 
 ### Average of 3 vectors:
 
@@ -383,6 +393,21 @@ size : 1048576
 temps scalaire 6.3992e-10
 temps vectoriel 6.56035e-10
 ```
+### Results table :
 
-**Results:**
-We would expect that the vectorial calculations will take less time than the scalar calculations. However, this is not always the case. There is often a lot of overhead to transform the scalars to a vectorized format. Perhaps with vectors of a bigger size, the difference in time would be more apparent ?
+|                                   | Average of 3 vectors | Scalar Product | Min Max of vector | Gaussian filter        | Absolute value   |
+| --------------------------------- | -------------------- | -------------- | ----------------- | ---------------------- | ---------------- |
+| Scalar without auto-vectorisation | 1.51e-09             | 4.58e-14       | 1.11e-09          | 3.78e-09               | 7.64e-10         |
+| Scalar                            | 1.35e-09             | 3.81e-14       | 1.11e-09          | 1.73e-09               | 6.40e-10         |
+| Speed up %                        | 12%                  | 20%            | negligible        | 2.2 times              | 19%              |
+| Vectorization                     | 1.73e-09             | 2.41e-09       | 2.15e-10          | 6.62e-10               | 6.56e-10         |
+| Speed up %                        | slow down            | much slower    | 5 times faster    | 5.7 (2.6) times faster | 19% (negligible) |
+
+
+###Global Results :
+As expected, the code that is compiled when auto-vectorising is slightly faster than the code that is compiled without auto-vectorisation. However, vectorising the code through SIMD does not guarantee a better time. 
+- Average of 3 vectors: There is no improvement when vectorising the code in simd when compared to scalar code that is automatically vectorized by the compiler.  
+- Dot Product: Calculating the dot product is much slower when vectorized through SIMD. This may be exxpected as vectorization does not really make this problem faster as it is a reduction problem.   
+- Min Max: Unlike other algorithms, there is no difference when auto-vectorising the scalar code as there are conditional statements within the loop. However, by vectoring it with SIMD, it is significantly faster as functions to get the minmax of vectors exist.
+- Gaussian Filter: The results does not seem coherent with the results obtained with the average of 3 vectors because it is remains the same operation.   
+- Absolute Value: The simd vectorisation does not provide a significant improvement. The simd code for absolute value is written by hand whilst the scalar code uses the `fabs` function in the math library that is probably optimized for such an operation. 
