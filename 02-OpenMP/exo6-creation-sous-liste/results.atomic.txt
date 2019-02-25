@@ -1,0 +1,61 @@
+rm -f obj/main.o
+rm -f test.exe
+g++ -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude -c src/main.cpp -o obj/main.o
+g++ -o exe/test.exe obj/main.o -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude   -lm
+Size seq_duration / par_duration
+rm -f obj/main.o
+rm -f test.exe
+g++ -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude -c src/main.cpp -o obj/main.o
+g++ -o exe/test.exe obj/main.o -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude   -lm
+Size seq_duration / par_duration
+1024 0.0398331
+1228 0.0336288
+1473 0.0359961
+1767 0.0379365
+2120 0.040714
+2544 0.0938939
+3052 0.116186
+3662 0.150103
+4394 0.150828
+5272 0.159098
+6326 0.158107
+7591 0.160799
+9109 0.17507
+10930 0.178536
+13116 0.176546
+15739 0.184682
+18886 0.188114
+22663 0.185391
+27195 0.191276
+32634 0.194417
+39160 0.194568
+46992 0.199278
+56390 0.189875
+67668 0.201032
+81201 0.201092
+97441 0.192939
+116929 0.203155
+140314 0.20301
+168376 0.199877
+202051 0.203085
+242461 0.20409
+290953 0.191032
+349143 0.199408
+418971 0.201761
+502765 0.202851
+603318 0.200995
+723981 0.202177
+868777 0.203974
+1042532 0.204931
+1251038 0.204365
+1501245 0.206396
+1801494 0.206697
+2161792 0.207923
+2594150 0.208484
+3112980 0.207543
+3735576 0.209538
+rm -f obj/main.o
+rm -f test.exe
+g++ -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude -c src/main.cpp -o obj/main.o
+g++ -o exe/test.exe obj/main.o -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude   -lm
+Size seq_duration / par_duration

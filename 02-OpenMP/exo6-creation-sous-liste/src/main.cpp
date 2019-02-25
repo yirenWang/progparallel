@@ -5,7 +5,7 @@
 #include <immintrin.h>
 #include <omp.h>
 
-void sequentiel(int *A, int *S, unsigned long int size)
+unsigned long int sequentiel(int *A, int *S, unsigned long int size)
 {
     unsigned long int ne = 0;
     for (unsigned long int i = 0; i < size; i++)
@@ -16,25 +16,51 @@ void sequentiel(int *A, int *S, unsigned long int size)
             ne += 1;
         }
     }
+    return ne;
 }
 
-void parallele(int *A, int *S, unsigned long int size)
+unsigned long int parallele(int *A, int *S, unsigned long int size)
 {
     unsigned long int ne = 0;
+    unsigned long int nelocal;
 
-#pragma omp parallel shared(ne)
+#pragma omp parallel for shared(ne) private(nelocal)
+    for (unsigned long int i = 0; i < size; i++)
     {
-#pragma omp parallel for
-        for (unsigned long int i = 0; i < size; i++)
+        if (A[i] % 2)
         {
-            if (A[i] % 2 == 0)
-            {
-                S[ne] = A[i];
 #pragma omp atomic
-                ne += 1;
-            }
+            ne++;
+            nelocal = ne;
+            S[nelocal] = A[i];
         }
     }
+
+    return ne;
+}
+
+
+unsigned long int parallele2(int *A, int *S, unsigned long int size)
+{
+    unsigned long int ne = 0;
+    unsigned long int nelocal;
+    int THREADS = 0;
+#pragma omp parallel
+    {
+        THREADS = omp_get_num_threads();
+    }
+
+#pragma omp parallel for schedule(static, size/THREADS)
+    for (unsigned long int i = 0; i < size; i++)
+    {
+        if (A[i] % 2 == 0)
+        {
+            ne++;
+            S[size/THREADS * omp_get_thread_num() + ne] = A[i];
+        }
+    }
+#pragma omp parallel for
+    return ne;
 }
 
 int main()
@@ -54,6 +80,7 @@ int main()
         S1 = (int *)malloc(size * sizeof(int));
         S2 = (int *)malloc(size * sizeof(int));
 
+        unsigned long int ne1, ne2;
         for (unsigned long int i = 0; i < size; i++)
         {
             A[i] = (int)(rand() % 360 - 180.0);
@@ -65,7 +92,7 @@ int main()
         t0 = std::chrono::high_resolution_clock::now();
         for (auto it = 0; it < iter; it++)
         {
-            sequentiel(A, S1, size);
+            ne1 = sequentiel(A, S1, size);
         }
         t1 = std::chrono::high_resolution_clock::now();
         double seq_duration = std::chrono::duration<double>(t1 - t0).count();
@@ -74,29 +101,30 @@ int main()
         t0 = std::chrono::high_resolution_clock::now();
         for (auto it = 0; it < iter; it++)
         {
-            parallele(A, S2, size);
+            ne2 = parallele2(A, S2, size);
         }
         t1 = std::chrono::high_resolution_clock::now();
         double par_duration = std::chrono::duration<double>(t1 - t0).count();
         par_duration /= (size * iter);
 
         std::cout << size << " " << seq_duration / par_duration << std::endl;
+        std::cout << ne1 << " " << ne2  << std::endl;
         // std::cout << size << " " << seq_duration << " " << par_duration << std::endl;
 
         /*** Validation ***/
-        bool valide = false;
-        for (unsigned long int i = 0; i < size; i++)
-        {
-            if (S1[i] == S2[i])
-            {
-                valide = true;
-            }
-            else
-            {
-                valide = false;
-                break;
-            }
-        }
+        // bool valide = false;
+        // for (unsigned long int i = 0; i < size; i++)
+        // {
+        //     if (S1[i] == S2[i])
+        //     {
+        //         valide = true;
+        //     }
+        //     else
+        //     {
+        //         valide = false;
+        //         break;
+        //     }
+        // }
 
         // Libération de la mémoire : indispensable
 
