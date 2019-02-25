@@ -5,20 +5,35 @@
 #include <immintrin.h>
 #include <omp.h>
 
-void sequentiel(double *A, double *B, double *S, unsigned long int size)
+void sequentiel(int *A, int *S, unsigned long int size)
 {
+    unsigned long int ne = 0;
     for (unsigned long int i = 0; i < size; i++)
     {
-        S[i] = (A[i] + B[i]) / 2;
+        if (A[i] % 2 == 0)
+        {
+            S[ne] = A[i];
+            ne += 1;
+        }
     }
 }
 
-void parallele(double *A, double *B, double *S, unsigned long int size)
+void parallele(int *A, int *S, unsigned long int size)
 {
-#pragma omp parallel for
-    for (unsigned long j = 0; j < size; j++)
+    unsigned long int ne = 0;
+
+#pragma omp parallel shared(ne)
     {
-        S[j] = (A[j] + B[j]) / 2;
+#pragma omp parallel for
+        for (unsigned long int i = 0; i < size; i++)
+        {
+            if (A[i] % 2 == 0)
+            {
+                S[ne] = A[i];
+#pragma omp atomic
+                ne += 1;
+            }
+        }
     }
 }
 
@@ -34,16 +49,14 @@ int main()
         unsigned long int iter = 256 * 1024 * 1024 / size;
 
         // Création des données de travail
-        double *A, *B, *C, *S1, *S2;
-        A = (double *)malloc(size * sizeof(double));
-        B = (double *)malloc(size * sizeof(double));
-        S1 = (double *)malloc(size * sizeof(double));
-        S2 = (double *)malloc(size * sizeof(double));
+        int *A, *S1, *S2;
+        A = (int *)malloc(size * sizeof(int));
+        S1 = (int *)malloc(size * sizeof(int));
+        S2 = (int *)malloc(size * sizeof(int));
 
         for (unsigned long int i = 0; i < size; i++)
         {
-            A[i] = (double)(rand() % 360 - 180.0);
-            B[i] = (double)(rand() % 360 - 180.0);
+            A[i] = (int)(rand() % 360 - 180.0);
         }
 
         std::chrono::high_resolution_clock::time_point t0 = std::chrono::high_resolution_clock::now();
@@ -52,7 +65,7 @@ int main()
         t0 = std::chrono::high_resolution_clock::now();
         for (auto it = 0; it < iter; it++)
         {
-            sequentiel(A, B, S1, size);
+            sequentiel(A, S1, size);
         }
         t1 = std::chrono::high_resolution_clock::now();
         double seq_duration = std::chrono::duration<double>(t1 - t0).count();
@@ -61,7 +74,7 @@ int main()
         t0 = std::chrono::high_resolution_clock::now();
         for (auto it = 0; it < iter; it++)
         {
-            parallele(A, B, S2, size);
+            parallele(A, S2, size);
         }
         t1 = std::chrono::high_resolution_clock::now();
         double par_duration = std::chrono::duration<double>(t1 - t0).count();
@@ -88,7 +101,6 @@ int main()
         // Libération de la mémoire : indispensable
 
         free(A);
-        free(B);
         free(S1);
         free(S2);
     }
