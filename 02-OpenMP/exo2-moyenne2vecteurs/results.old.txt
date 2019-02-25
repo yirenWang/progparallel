@@ -1,0 +1,265 @@
+rm -f obj/main.o
+rm -f test.exe
+g++ -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude -c src/main.cpp -o obj/main.o
+g++ -o exe/test.exe obj/main.o -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude   -lm
+Size: 1024 Iterations: 262144Sequential 
+Time taken to fill : 5.64e-05
+Time taken to calculate : 9.5e-06
+Parallel 
+Time taken to fill : 0.0015303
+Time taken to calculate : 1.21e-05
+Size: 1228 Iterations: 218595Sequential 
+Time taken to fill : 9.99e-05
+Time taken to calculate : 9.3e-06
+Parallel 
+Time taken to fill : 0.0002006
+Time taken to calculate : 1.22e-05
+Size: 1473 Iterations: 182237Sequential 
+Time taken to fill : 8.85e-05
+Time taken to calculate : 9.3e-06
+Parallel 
+Time taken to fill : 0.0002205
+Time taken to calculate : 1.23e-05
+Size: 1767 Iterations: 151915Sequential 
+Time taken to fill : 0.0001094
+Time taken to calculate : 9.4e-06
+Parallel 
+Time taken to fill : 0.0002254
+Time taken to calculate : 1.23e-05
+Size: 2120 Iterations: 126620Sequential 
+Time taken to fill : 0.000125
+Time taken to calculate : 9.4e-06
+Parallel 
+Time taken to fill : 0.0002698
+Time taken to calculate : 1.26e-05
+Size: 2544 Iterations: 105517Sequential 
+Time taken to fill : 0.0001478
+Time taken to calculate : 9.6e-06
+Parallel 
+Time taken to fill : 0.0015508
+Time taken to calculate : 1.27e-05
+Size: 3052 Iterations: 87953Sequential 
+Time taken to fill : 0.0001749
+Time taken to calculate : 9.6e-06
+Parallel 
+Time taken to fill : 0.00029
+Time taken to calculate : 1.3e-05
+Size: 3662 Iterations: 73302Sequential 
+Time taken to fill : 0.0003173
+Time taken to calculate : 9.6e-06
+Parallel 
+Time taken to fill : 0.0004542
+Time taken to calculate : 1.31e-05
+Size: 4394 Iterations: 61091Sequential 
+Time taken to fill : 0.0002381
+Time taken to calculate : 9.8e-06
+Parallel 
+Time taken to fill : 0.0022137
+Time taken to calculate : 1.36e-05
+Size: 5272 Iterations: 50917Sequential 
+Time taken to fill : 0.0003601
+Time taken to calculate : 9.8e-06
+Parallel 
+Time taken to fill : 0.000698
+Time taken to calculate : 1.4e-05
+Size: 6326 Iterations: 42433Sequential 
+Time taken to fill : 0.0003348
+Time taken to calculate : 9.5e-06
+Parallel 
+Time taken to fill : 0.000594
+Time taken to calculate : 1.47e-05
+Size: 7591 Iterations: 35362Sequential 
+Time taken to fill : 0.000512
+Time taken to calculate : 1.01e-05
+Parallel 
+Time taken to fill : 0.0049327
+Time taken to calculate : 1.51e-05
+Size: 9109 Iterations: 29469Sequential 
+Time taken to fill : 0.0004819
+Time taken to calculate : 9.6e-06
+Parallel 
+Time taken to fill : 0.0040352
+Time taken to calculate : 1.57e-05
+Size: 10930 Iterations: 24559Sequential 
+Time taken to fill : 0.00142
+Time taken to calculate : 1.12e-05
+Parallel 
+Time taken to fill : 0.0023333
+Time taken to calculate : 1.63e-05
+Size: 13116 Iterations: 20466Sequential 
+Time taken to fill : 0.0008479
+Time taken to calculate : 1.19e-05
+Parallel 
+Time taken to fill : 0.0031364
+Time taken to calculate : 1.74e-05
+Size: 15739 Iterations: 17055Sequential 
+Time taken to fill : 0.0007864
+Time taken to calculate : 1.34e-05
+Parallel 
+Time taken to fill : 0.0103713
+Time taken to calculate : 1.87e-05
+Size: 18886 Iterations: 14213Sequential 
+Time taken to fill : 0.000948
+Time taken to calculate : 1.54e-05
+Parallel 
+Time taken to fill : 0.0173308
+Time taken to calculate : 2.01e-05
+Size: 22663 Iterations: 11844Sequential 
+Time taken to fill : 0.0012152
+Time taken to calculate : 2e-05
+Parallel 
+Time taken to fill : 0.0107226
+Time taken to calculate : 2.2e-05
+Size: 27195 Iterations: 9870Sequential 
+Time taken to fill : 0.0015932
+Time taken to calculate : 2.39e-05
+Parallel 
+Time taken to fill : 0.0048485
+Time taken to calculate : 2.39e-05
+Size: 32634 Iterations: 8225Sequential 
+Time taken to fill : 0.0022083
+Time taken to calculate : 2.99e-05
+Parallel 
+Time taken to fill : 0.0177233
+Time taken to calculate : 2.62e-05
+Size: 39160 Iterations: 6854Sequential 
+Time taken to fill : 0.0019711
+Time taken to calculate : 3.74e-05
+Parallel 
+Time taken to fill : 0.0288846
+Time taken to calculate : 2.92e-05
+Size: 46992 Iterations: 5712Sequential 
+Time taken to fill : 0.0029744
+Time taken to calculate : 4.7e-05
+Parallel 
+Time taken to fill : 0.0181412
+Time taken to calculate : 3.24e-05
+Size: 56390 Iterations: 4760Sequential 
+Time taken to fill : 0.0031844
+Time taken to calculate : 5.43e-05
+Parallel 
+Time taken to fill : 0.0512061
+Time taken to calculate : 3.64e-05
+Size: 67668 Iterations: 3966Sequential 
+Time taken to fill : 0.0033154
+Time taken to calculate : 6.28e-05
+Parallel 
+Time taken to fill : 0.0291717
+Time taken to calculate : 4.12e-05
+Size: 81201 Iterations: 3305Sequential 
+Time taken to fill : 0.0047841
+Time taken to calculate : 7.3e-05
+Parallel 
+Time taken to fill : 0.0572673
+Time taken to calculate : 4.66e-05
+Size: 97441 Iterations: 2754Sequential 
+Time taken to fill : 0.0048522
+Time taken to calculate : 6.7e-05
+Parallel 
+Time taken to fill : 0.022958
+Time taken to calculate : 5.31e-05
+Size: 116929 Iterations: 2295Sequential 
+Time taken to fill : 0.0056205
+Time taken to calculate : 0.0001003
+Parallel 
+Time taken to fill : 0.0397893
+Time taken to calculate : 6.1e-05
+Size: 140314 Iterations: 1913Sequential 
+Time taken to fill : 0.0067334
+Time taken to calculate : 0.0001186
+Parallel 
+Time taken to fill : 0.128046
+Time taken to calculate : 7.6e-05
+Size: 168376 Iterations: 1594Sequential 
+Time taken to fill : 0.008732
+Time taken to calculate : 0.0001412
+Parallel 
+Time taken to fill : 0.0492115
+Time taken to calculate : 8.21e-05
+Size: 202051 Iterations: 1328Sequential 
+Time taken to fill : 0.0108207
+Time taken to calculate : 0.0001685
+Parallel 
+Time taken to fill : 0.0478815
+Time taken to calculate : 9.58e-05
+Size: 242461 Iterations: 1107Sequential 
+Time taken to fill : 0.0135214
+Time taken to calculate : 0.0002064
+Parallel 
+Time taken to fill : 0.0957555
+Time taken to calculate : 0.0001142
+Size: 290953 Iterations: 922Sequential 
+Time taken to fill : 0.0145676
+Time taken to calculate : 0.0002616
+Parallel 
+Time taken to fill : 0.133472
+Time taken to calculate : 0.0001572
+Size: 349143 Iterations: 768Sequential 
+Time taken to fill : 0.0180828
+Time taken to calculate : 0.0003389
+Parallel 
+Time taken to fill : 0.116648
+Time taken to calculate : 0.0002465
+Size: 418971 Iterations: 640Sequential 
+Time taken to fill : 0.0203426
+Time taken to calculate : 0.0004396
+Parallel 
+Time taken to fill : 0.262345
+Time taken to calculate : 0.0003506
+Size: 502765 Iterations: 533Sequential 
+Time taken to fill : 0.0243644
+Time taken to calculate : 0.0005419
+Parallel 
+Time taken to fill : 0.363398
+Time taken to calculate : 0.0004436
+Size: 603318 Iterations: 444Sequential 
+Time taken to fill : 0.0292378
+Time taken to calculate : 0.0006396
+Parallel 
+Time taken to fill : 0.220591
+Time taken to calculate : 0.0005286
+Size: 723981 Iterations: 370Sequential 
+Time taken to fill : 0.0352383
+Time taken to calculate : 0.0007838
+Parallel 
+Time taken to fill : 0.588352
+Time taken to calculate : 0.0006531
+Size: 868777 Iterations: 308Sequential 
+Time taken to fill : 0.0416282
+Time taken to calculate : 0.000941
+Parallel 
+Time taken to fill : 0.721298
+Time taken to calculate : 0.0007726
+Size: 1042532 Iterations: 257Sequential 
+Time taken to fill : 0.0501136
+Time taken to calculate : 0.0011249
+Parallel 
+Time taken to fill : 0.866247
+Time taken to calculate : 0.0009362
+Size: 1251038 Iterations: 214Sequential 
+Time taken to fill : 0.0605219
+Time taken to calculate : 0.0013391
+Parallel 
+Time taken to fill : 0.982042
+Time taken to calculate : 0.0011146
+Size: 1501245 Iterations: 178Sequential 
+Time taken to fill : 0.0774983
+Time taken to calculate : 0.001576
+Parallel 
+Time taken to fill : 0.923309
+Time taken to calculate : 0.0013537
+Size: 1801494 Iterations: 149Sequential 
+Time taken to fill : 0.0969004
+Time taken to calculate : 0.0018814
+Parallel 
+Time taken to fill : 0.72981
+Time taken to calculate : 0.0015921
+Size: 2161792 Iterations: 124Sequential 
+Time taken to fill : 0.116957
+Time taken to calculate : 0.0022845
+Parallel 
+Time taken to fill : 1.04156
+Time taken to calculate : 0.0019241
+Size: 2594150 Iterations: 103Sequential 
+Time taken to fill : 0.127782
+Time taken to calculate : 0.0027033

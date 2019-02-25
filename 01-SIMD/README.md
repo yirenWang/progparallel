@@ -4,7 +4,7 @@
 
 The main goal of this TP is to take a look at how we can use `simd` to vectorize programs. The code is written in `C++` and complied using the following flags.
 
-Makefile flags
+#### Makefile flags
 
 ```
 # -- Flags ----------
