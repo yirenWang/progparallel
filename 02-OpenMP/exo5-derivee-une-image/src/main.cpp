@@ -34,7 +34,6 @@ void sobel_parallel(u_char **Source, u_char **Resultat, unsigned int height, uns
 #pragma omp parallel for
     for (auto i = 1; i < height - 1; i++)
     {
-#pragma omp parallel for
         for (auto j = 1; j < width - 1; j++)
         {
             if ((i == 0) || (i == height - 1) || (j == 0) || (j == width - 1))
@@ -90,7 +89,8 @@ int main(int argc, char *argv[])
     auto duration_p = std::chrono::duration<double>(t1 - t0).count() / ITER;
 
     std::cout << "time parallel: " << duration_p << std::endl;
-
+    std::cout << "time seq / parallel: " << duration/duration_p << std::endl;
+    
 #ifdef DEBUG
     image_filename = std::string("Sobel.pgm");
     save_gray_level_image(&imgResultat, image_filename, height, width);
