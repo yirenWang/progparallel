@@ -9,26 +9,26 @@
 
 using namespace std;
 
-__global__ void gpu_saxpy(int n, float a, float *x, float *y, float *s)
+__global__ void gpu_saxpy(int n, float *x, float *y, float *s)
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
-  if (i < n) s[i] = a*x[i] + y[i];
+  if (i < n) s[i] = ( x[i] + y[i] ) / 2;
 }
 
-void cpu_saxpy(int n, float a, float *x, float *y, float *s)
+void cpu_saxpy(int n, float *x, float *y, float *s)
 {
   #pragma omp parallel  for num_threads(8) 
   for (int i=0; i<n; i++)
   {
-      s[i] = a*x[i] + y[i];
+    s[i] = ( x[i] + y[i] ) / 2;
   }
 }
 
-void cpu_saxpy_mono(int n, float a, float *x, float *y, float *s)
+void cpu_saxpy_mono(int n, float *x, float *y, float *s)
 {
   for (int i=0; i<n; i++)
   {
-      s[i] = a*x[i] + y[i];
+    s[i] = ( x[i] + y[i] ) / 2;
   }
 }
 
@@ -61,7 +61,7 @@ int main(void)
   t0 = std::chrono::high_resolution_clock::now();
 
   // Perform SAXPY on 16M elements (CPU)
-  cpu_saxpy_mono(N, 2.0f, x, y, s_cpu);  
+  cpu_saxpy_mono(N, x, y, s_cpu);  
 
   t1 = std::chrono::high_resolution_clock::now();
 
@@ -74,7 +74,7 @@ int main(void)
 
     t0 = std::chrono::high_resolution_clock::now();
   
-    gpu_saxpy<<<(N+k)/k, k>>>(N, 2.0f, d_x, d_y, d_s);  
+    gpu_saxpy<<<(N+k)/k, k>>>(N, d_x, d_y, d_s);  
     
     t1 = std::chrono::high_resolution_clock::now();
   
@@ -85,7 +85,7 @@ int main(void)
   t0 = std::chrono::high_resolution_clock::now();
 
   // Perform SAXPY on 16M elements (CPU)
-  cpu_saxpy(N, 2.0f, x, y, s_cpu);  
+  cpu_saxpy(N, x, y, s_cpu);  
 
   t1 = std::chrono::high_resolution_clock::now();
 

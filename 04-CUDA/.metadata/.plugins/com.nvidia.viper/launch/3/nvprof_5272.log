@@ -1,0 +1,2 @@
+==5272== NVPROF is profiling process 5272, command: /home/progpar/animato/progparallel/04-CUDA/saxpi.exe
+==5272== Generated result file: /home/progpar/animato/progparallel/04-CUDA/.metadata/.plugins/com.nvidia.viper/launch/3/api_5272.log0

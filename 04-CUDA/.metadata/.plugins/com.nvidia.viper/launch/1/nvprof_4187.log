@@ -1,0 +1,2 @@
+==4187== NVPROF is profiling process 4187, command: /home/progpar/animato/progparallel/04-CUDA/saxpi.exe
+==4187== Generated result file: /home/progpar/animato/progparallel/04-CUDA/.metadata/.plugins/com.nvidia.viper/launch/1/api_4187.log

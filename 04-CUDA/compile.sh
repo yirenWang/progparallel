@@ -1,1 +1,1 @@
-nvcc -Xcompiler -fopenmp -O3 -o saxpi.exe saxpi.cu
+nvcc -Xcompiler -fopenmp -O3 -o ${1%.*}.exe $1
