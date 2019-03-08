@@ -1,13 +1,3 @@
-rm -f obj/main.o
-rm -f test.exe
-g++ -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude -c src/main.cpp -o obj/main.o
-g++ -o exe/test.exe obj/main.o -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude   -lm
-Size seq_duration / par_duration
-rm -f obj/main.o
-rm -f test.exe
-g++ -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude -c src/main.cpp -o obj/main.o
-g++ -o exe/test.exe obj/main.o -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude   -lm
-Size seq_duration / par_duration
 1024 0.0398331
 1228 0.0336288
 1473 0.0359961
@@ -54,8 +44,3 @@ Size seq_duration / par_duration
 2594150 0.208484
 3112980 0.207543
 3735576 0.209538
-rm -f obj/main.o
-rm -f test.exe
-g++ -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude -c src/main.cpp -o obj/main.o
-g++ -o exe/test.exe obj/main.o -O3 -std=c++11 -march=native -fno-tree-vectorize -fopenmp -Iinclude   -lm
-Size seq_duration / par_duration

@@ -79,6 +79,8 @@ A good explanation : http://jakascorner.com/blog/2016/06/omp-for-reduction.html
 
 **When not to use !**
 
+- For the sublist. cf below.
+
 ###Exercises
 
 1. Average of 2 vectors
@@ -219,31 +221,141 @@ TODO , replot
 **Sequential Code**
 
 ```C
+void sobel(u_char **Source, u_char **Resultat, unsigned int height, unsigned int width, unsigned int nthreads)
+{
+
+    for (auto i = 1; i < height - 1; i++)
+    {
+        for (auto j = 1; j < width - 1; j++)
+        {
+            if ((i == 0) || (i == height - 1) || (j == 0) || (j == width - 1))
+            {
+                Resultat[i][j] = 0;
+            }
+            else
+            {
+                Resultat[i][j] = std::abs(Source[i - 1][j - 1] + Source[i - 1][j] + Source[i - 1][j + 1] - (Source[i + 1][j - 1] + Source[i + 1][j] + Source[i + 1][j + 1]));
+                Resultat[i][j] += std::abs(Source[i - 1][j - 1] + Source[i][j - 1] + Source[i + 1][j - 1] - (Source[i - 1][j + 1] + Source[i][j + 1] + Source[i + 1][j + 1]));
+            }
+        }
+    }
+}
 
 ```
 
 **Parallel Code**
 
 ```C
-
+void sobel_parallel(u_char **Source, u_char **Resultat, unsigned int height, unsigned int width, unsigned int nthreads)
+{
+#pragma omp parallel for
+    for (auto i = 1; i < height - 1; i++)
+    {
+        for (auto j = 1; j < width - 1; j++)
+        {
+            if ((i == 0) || (i == height - 1) || (j == 0) || (j == width - 1))
+            {
+                Resultat[i][j] = 0;
+            }
+            else
+            {
+                Resultat[i][j] = std::abs(Source[i - 1][j - 1] + Source[i - 1][j] + Source[i - 1][j + 1] - (Source[i + 1][j - 1] + Source[i + 1][j] + Source[i + 1][j + 1]));
+                Resultat[i][j] += std::abs(Source[i - 1][j - 1] + Source[i][j - 1] + Source[i + 1][j - 1] - (Source[i - 1][j + 1] + Source[i][j + 1] + Source[i + 1][j + 1]));
+            }
+        }
+    }
+}
 ```
 
 **Results**
-![]()
 
-5. Sublist
+- Check `results.txt` in appropriate folder.
+  It works ! The parallel code is faster. The best results are obtained with 1 `pragma parallel for` on the outer loop.
+
+1. Sublist
 
 **Sequential Code**
 
 ```C
+unsigned long int sequentiel(int *A, int *S, unsigned long int size)
+{
+    unsigned long int ne = 0;
+    for (unsigned long int i = 0; i < size; i++)
+    {
+        if (A[i] % 2 == 0)
+        {
+            S[ne] = A[i];
+            ne += 1;
+        }
+    }
+    return ne;
+}
 
+unsigned long int parallele(int *A, int *S, unsigned long int size)
+{
+    unsigned long int ne = 0;
+
+#pragma omp parallel for shared(ne)
+    for (unsigned long int i = 0; i < size; i++)
+    {
+        if (A[i] % 2 == 0)
+        {
+#pragma omp atomic
+            ne++;
+            S[ne] = A[i];
+        }
+    }
+
+    return ne;
+}
 ```
 
 **Parallel Code**
 
-```C
+There are two different ways to parallelize the above code. We can ensure that the counter `ne` is not modified simultaneously with the `atomic` command. However, this defeats the purpose of parallelising the code as it is very slow. We can also separate the vector into `number of threads` segments and assign manually each segment to a thread with `schedule(static, size/number_of_threads)`. The allows for real parallel code execution. Nonetheless, we need sequential code to condense the final table.
 
+Beware:
+
+We can not use `reduction` despite having the right `ne` at the end. Each thread will have it's local `ne` and therefore the elements of final table with not be correct as certain values may be overwritten.
+
+```C
+unsigned long int parallele2(int *A, int *S, unsigned long int size)
+{
+    unsigned long int global_ne[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    int* tmp = (int*)malloc(size*sizeof(int));
+
+    #pragma omp parallel
+    {
+        int current_thread = omp_get_thread_num();
+    #pragma omp for schedule(static, size/8)
+        for(unsigned long int i=0; i < size; i++)
+        {
+            if (A[i] % 2 == 0)
+            {
+                tmp[current_thread*size/8 + global_ne[current_thread]] = A[i];
+                global_ne[current_thread] += 1;
+            }
+        }
+    }
+
+
+    int ne = 0;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < global_ne[i]; j++)
+        {
+            S[ne] = tmp[i*size/8 + j];
+            ne++;
+        }
+    }
+    free(tmp);
+    return ne;
+}
 ```
 
 **Results**
-![]()
+![sublist graph](sublist.png)
+
+#### Conclusion
+
+OpenMP is good and easy <3 (for trvial loops)
