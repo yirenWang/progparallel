@@ -75,7 +75,8 @@ int main(void)
     t0 = std::chrono::high_resolution_clock::now();
   
     gpu_saxpy<<<(N+k)/k, k>>>(N, d_x, d_y, d_s);  
-    
+    cudaDeviceSynchronize();
+
     t1 = std::chrono::high_resolution_clock::now();
   
     std::cout << "gpu time \t" << std::chrono::duration<double>(t1 - t0).count() << std::endl;

@@ -1,0 +1,36 @@
+1 parallel pragma for outer loop
+
+size: width*height 720 480
+time seq: 0.00127381
+time parallel: 0.00038256
+time seq / parallel: 3.3297
+
+size: width*height4000 2667
+time seq: 0.0398822
+time parallel: 0.0144575
+time seq / parallel: 2.75859
+
+2 parallel pragma for outer loop & inner loop 
+
+size: width*height720 480
+time seq: 0.0012736
+time parallel: 0.000565512
+time seq / parallel: 2.25211
+
+size: width*height4000 2667
+time seq: 0.0398075
+time parallel: 0.0160755
+time seq / parallel: 2.47629
+
+
+1 parallel pragma for inner loop
+
+size: width*height720 480
+time seq: 0.00128398
+time parallel: 0.000832375
+time seq / parallel: 1.54255
+
+size: width*height4000 2667
+time seq: 0.0398695
+time parallel: 0.0186538
+time seq / parallel: 2.13734
