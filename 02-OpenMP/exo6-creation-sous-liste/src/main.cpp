@@ -22,17 +22,15 @@ unsigned long int sequentiel(int *A, int *S, unsigned long int size)
 unsigned long int parallele(int *A, int *S, unsigned long int size)
 {
     unsigned long int ne = 0;
-    unsigned long int nelocal;
 
-#pragma omp parallel for shared(ne) private(nelocal)
+#pragma omp parallel for shared(ne)
     for (unsigned long int i = 0; i < size; i++)
     {
-        if (A[i] % 2)
+        if (A[i] % 2 == 0)
         {
 #pragma omp atomic
             ne++;
-            nelocal = ne;
-            S[nelocal] = A[i];
+            S[ne] = A[i];
         }
     }
 
@@ -42,24 +40,34 @@ unsigned long int parallele(int *A, int *S, unsigned long int size)
 
 unsigned long int parallele2(int *A, int *S, unsigned long int size)
 {
-    unsigned long int ne = 0;
-    unsigned long int nelocal;
-    int THREADS = 0;
-#pragma omp parallel
-    {
-        THREADS = omp_get_num_threads();
-    }
+    unsigned long int global_ne[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    int* tmp = (int*)malloc(size*sizeof(int));
 
-#pragma omp parallel for schedule(static, size/THREADS)
-    for (unsigned long int i = 0; i < size; i++)
+    #pragma omp parallel
     {
-        if (A[i] % 2 == 0)
+        int current_thread = omp_get_thread_num();
+    #pragma omp for schedule(static, size/8)
+        for(unsigned long int i=0; i < size; i++)
         {
-            ne++;
-            S[size/THREADS * omp_get_thread_num() + ne] = A[i];
+            if (A[i] % 2 == 0)
+            {   
+                tmp[current_thread*size/8 + global_ne[current_thread]] = A[i];
+                global_ne[current_thread] += 1;
+            }
         }
     }
-#pragma omp parallel for
+    
+
+    int ne = 0;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < global_ne[i]; j++)
+        {   
+            S[ne] = tmp[i*size/8 + j];
+            ne++;
+        }
+    }
+    free(tmp);
     return ne;
 }
 
@@ -108,13 +116,14 @@ int main()
         par_duration /= (size * iter);
 
         std::cout << size << " " << seq_duration / par_duration << std::endl;
-        std::cout << ne1 << " " << ne2  << std::endl;
+        // std::cout << ne1 << " " << ne2  << std::endl;
         // std::cout << size << " " << seq_duration << " " << par_duration << std::endl;
 
         /*** Validation ***/
         // bool valide = false;
         // for (unsigned long int i = 0; i < size; i++)
         // {
+        //     std::cout << S1[i] << " " << S2[i] << std::endl;
         //     if (S1[i] == S2[i])
         //     {
         //         valide = true;
