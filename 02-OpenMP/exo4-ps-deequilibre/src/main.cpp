@@ -38,7 +38,7 @@ double parallele_static(double *A, double *B, unsigned long int size)
 {
     double S = 0;
 
-#pragma omp parallel for schedule(dynamic, size / 10) reduction(+ \
+#pragma omp parallel for schedule(dynamic, size/8) reduction(+ \
                                                                 : S)
     for (unsigned long j = 0; j < size; j++)
     {
@@ -95,7 +95,7 @@ int main()
         par_duration /= (size * iter);
 
         std::cout << size << " " << seq_duration / par_duration << std::endl;
-        // std::cout << size << " " << seq_duration << " " << par_duration << " " << par_s_duration << std::endl;
+        //std::cout << size << " " << seq_duration << " " << par_duration << " " << std::endl;
 
         /*** Validation ***/
         bool valide = false;
