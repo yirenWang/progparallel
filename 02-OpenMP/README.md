@@ -2,7 +2,7 @@
 
 ### Goal :
 
-Using OpenMP to parallelize programs using the multiple threads available on a cpu. The cpu that's used for the following results is a `1,6 GHz Intel Core i5` that contains 2 threads. Some programs are also run with a `TODO` that contains 4 threads.
+Using OpenMP to parallelize programs using the multiple threads available on a cpu. The cpu that's used for the following results is a `1,6 GHz Intel Core i5` that contains 2 threads. Some programs are also run with a `3.6 GHz Intel Core i7` that contains 8 threads.
 
 #### Setup & Useful code
 
@@ -120,7 +120,7 @@ The performance is improved
 
 When the size of the vector is bigger than 10^6, the advantages of multithreading is lost as it requires information that is not directly available for each thread but rather shared within a cache that takes longer to read from.
 
-1. Dot product
+2. Dot product
 
 Calculating the dot product of 2 vectors requires a summing operation. OpenMP `reduction(+ : S)` indicates that we would like to sum up the values in the different threads in S.
 
@@ -169,7 +169,7 @@ We observe the same phenomenon as with the average of 2 vectors.
 
 There are sharp drops in performance for when the size of the vector is at $4.10^4$ and $2.10^5$.
 
-1. Uneven dot product
+3. Uneven dot product
 
 **Sequential Code**
 
@@ -208,15 +208,14 @@ double parallele_schedule(double *A, double *B, unsigned long int size)
 ```
 
 **Results**
-TODO , replot
 ![dot prod uneven graph](./dot_product_unequal.png)
 
 - `schedule(static, size/thread_num)` : The fastest
 - `schedule(dynamic)` : Takes way to long
-- `schedule(dynamic, size/2)` : Faster but still slower than `static`
+- `schedule(dynamic, size/thread_num)` : Faster but still slightly slower than `static`
 - `schedule(auto)`: The fastest
 
-1. Derivate an image using Sobel filter
+4. Derivate an image using Sobel filter
 
 **Sequential Code**
 
@@ -272,7 +271,7 @@ void sobel_parallel(u_char **Source, u_char **Resultat, unsigned int height, uns
 - Check `results.txt` in appropriate folder.
   It works ! The parallel code is faster. The best results are obtained with 1 `pragma parallel for` on the outer loop.
 
-1. Sublist
+5. Sublist
 
 **Sequential Code**
 
