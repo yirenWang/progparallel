@@ -57,9 +57,15 @@ int main(int argc, char* argv[]) {
     cudaMalloc(&d_ResultatGPU, height*width*sizeof(u_char));    
     cudaMalloc(&d_ResultatGPUShared, height*width*sizeof(u_char));    
 
+    std::chrono::high_resolution_clock::time_point t_mc0 = std::chrono::high_resolution_clock::now();
+
     cudaMemcpy(d_Source, Source[0], height*width*sizeof(u_char), cudaMemcpyHostToDevice);
 
+    std::chrono::high_resolution_clock::time_point t_mc1 = std::chrono::high_resolution_clock::now();
+
+
     std::chrono::high_resolution_clock::time_point t0 = std::chrono::high_resolution_clock::now();
+
     for (auto it =0; it < ITER; it++) {
         cpu_sobel(Source, Resultat, height, width, nthreads);
     }
@@ -75,7 +81,14 @@ int main(int argc, char* argv[]) {
     }
     t1 = std::chrono::high_resolution_clock::now();
     auto gpu_duration = std::chrono::duration<double>(t1-t0).count()/ITER;
+
+    std::chrono::high_resolution_clock::time_point t_mc2 = std::chrono::high_resolution_clock::now();
+
     cudaMemcpy(ResultatGPU[0], d_ResultatGPU, height*width*sizeof(u_char), cudaMemcpyDeviceToHost);
+    
+    std::chrono::high_resolution_clock::time_point t_mc3 = std::chrono::high_resolution_clock::now();
+
+    auto gpu_mem_copy_duration = std::chrono::duration<double>(t_mc3-t_mc2 + t_mc1 - t_mc0).count()/ITER;
 
     dim3 blocks2(width/(BLOCKDIM_X-2),height/(BLOCKDIM_Y-2));
     // dim3 blocks2(2,2);
@@ -89,7 +102,7 @@ int main(int argc, char* argv[]) {
 
     cudaMemcpy(ResultatGPUShared[0], d_ResultatGPUShared, height*width*sizeof(u_char), cudaMemcpyDeviceToHost);
 
-    std::cout << cpu_duration << " "  << gpu_duration << " "  << gpu_duration_shared << std::endl;
+    std::cout << cpu_duration << " "  << gpu_duration << " "  << gpu_duration_shared << " " << gpu_mem_copy_duration << std::endl;
 
     #ifdef DEBUG
         image_filename=std::string("images/Resultats/Sobel_cpu.pgm");

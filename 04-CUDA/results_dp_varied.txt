@@ -1,0 +1,172 @@
+k = 1024
+
+N=1
+0
+cpu time mono 	1.4604e-05
+gpu time 	1.7801e-05
+cpu time para 	0.000816561
+gpu mem copy time 	1.6545e-05
+Max error: 0.000000
+N=4
+0
+cpu time mono 	4.62e-06
+gpu time 	1.2035e-05
+cpu time para 	1.755e-06
+gpu mem copy time 	1.4824e-05
+Max error: 0.000000
+N=16
+0
+cpu time mono 	4.692e-06
+gpu time 	1.0823e-05
+cpu time para 	1.631e-06
+gpu mem copy time 	1.4793e-05
+Max error: 0.000000
+N=64
+0
+cpu time mono 	4.66e-06
+gpu time 	1.1016e-05
+cpu time para 	1.597e-06
+gpu mem copy time 	1.4714e-05
+Max error: 0.000000
+N=256
+0
+cpu time mono 	4.759e-06
+gpu time 	1.0849e-05
+cpu time para 	1.704e-06
+gpu mem copy time 	1.4513e-05
+Max error: 0.000000
+N=1024
+0
+cpu time mono 	4.794e-06
+gpu time 	1.1443e-05
+cpu time para 	1.579e-06
+gpu mem copy time 	1.4736e-05
+Max error: 0.000000
+N=4096
+0
+cpu time mono 	4.692e-06
+gpu time 	1.3624e-05
+cpu time para 	2.107e-06
+gpu mem copy time 	1.5376e-05
+Max error: 0.000000
+N=16384
+0
+cpu time mono 	4.849e-06
+gpu time 	1.5287e-05
+cpu time para 	3.655e-06
+gpu mem copy time 	1.6918e-05
+Max error: 0.000000
+N=65536
+0
+cpu time mono 	5.185e-06
+gpu time 	2.4544e-05
+cpu time para 	9.899e-06
+gpu mem copy time 	4.4181e-05
+Max error: 0.000000
+N=262144
+0
+cpu time mono 	5.901e-06
+gpu time 	6.4783e-05
+cpu time para 	3.5907e-05
+gpu mem copy time 	0.000162204
+Max error: 0.000000
+N=1048576
+0
+cpu time mono 	1.8119e-05
+gpu time 	0.00038845
+cpu time para 	0.00076936
+gpu mem copy time 	0.000242199
+Max error: 0.000000
+N=4194304
+0
+cpu time mono 	1.9395e-05
+gpu time 	0.00137097
+cpu time para 	0.00164173
+gpu mem copy time 	0.000238133
+Max error: 0.000000
+
+k = 32
+N=1
+0
+cpu time mono 	1.709e-05
+gpu time 	1.7921e-05
+cpu time para 	0.00028925
+gpu mem copy time 	1.7201e-05
+Max error: 0.000000
+N=4
+0
+cpu time mono 	4.657e-06
+gpu time 	1.2207e-05
+cpu time para 	1.821e-06
+gpu mem copy time 	1.4765e-05
+Max error: 0.000000
+N=16
+0
+cpu time mono 	4.611e-06
+gpu time 	1.0939e-05
+cpu time para 	1.443e-06
+gpu mem copy time 	1.5054e-05
+Max error: 0.000000
+N=64
+0
+cpu time mono 	5.621e-06
+gpu time 	1.2333e-05
+cpu time para 	1.55e-06
+gpu mem copy time 	1.5031e-05
+Max error: 0.000000
+N=256
+0
+cpu time mono 	4.504e-06
+gpu time 	1.0823e-05
+cpu time para 	1.404e-06
+gpu mem copy time 	1.4809e-05
+Max error: 0.000000
+N=1024
+0
+cpu time mono 	4.61e-06
+gpu time 	1.1359e-05
+cpu time para 	1.604e-06
+gpu mem copy time 	1.4745e-05
+Max error: 0.000000
+N=4096
+0
+cpu time mono 	4.843e-06
+gpu time 	1.3554e-05
+cpu time para 	2.092e-06
+gpu mem copy time 	1.5638e-05
+Max error: 0.000000
+N=16384
+0
+cpu time mono 	4.99e-06
+gpu time 	1.6289e-05
+cpu time para 	3.675e-06
+gpu mem copy time 	1.6672e-05
+Max error: 0.000000
+N=65536
+0
+cpu time mono 	5.222e-06
+gpu time 	2.7849e-05
+cpu time para 	9.655e-06
+gpu mem copy time 	4.4608e-05
+Max error: 0.000000
+N=262144
+0
+cpu time mono 	7.12e-06
+gpu time 	8.1739e-05
+cpu time para 	0.00013247
+gpu mem copy time 	0.000161757
+Max error: 0.000000
+N=1048576
+0
+cpu time mono 	1.9028e-05
+gpu time 	0.000539879
+cpu time para 	0.000952963
+gpu mem copy time 	0.000235849
+Max error: 0.000000
+N=4194304
+0
+cpu time mono 	2.0775e-05
+gpu time 	0.00193174
+cpu time para 	0.0015138
+gpu mem copy time 	0.000245129
+Max error: 0.000000
