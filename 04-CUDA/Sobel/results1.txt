@@ -1,3 +1,9 @@
+drone
+drone huge
+carre
+
+cpu_duration << " "  << gpu_duration << " "  << gpu_duration_shared << " " << gpu_mem_copy_duration
+
 #define BLOCKDIM_X 12
 #define BLOCKDIM_Y 12
 720 480

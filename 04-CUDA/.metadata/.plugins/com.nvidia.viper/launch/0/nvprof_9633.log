@@ -1,0 +1,3 @@
+==9633== NVPROF is profiling process 9633, command: /home/cao3/animato/progparallel/04-CUDA/Transpose/exe/sobel.exe images/Carre.pgm 1
+==9633== Warning: Some profiling data are not recorded. Make sure cudaProfilerStop() or cuProfilerStop() is called before application exit to flush profile data.
+==9633== Generated result file: /home/cao3/animato/progparallel/04-CUDA/.metadata/.plugins/com.nvidia.viper/launch/0/api_9633.log

@@ -38,7 +38,7 @@ int cpu_saxpy_mono(int n, float *x, float *y, float s)
 
 int main(void)
 {
-  for (int n = 1; n < 4096; n*=2)
+  for (int n = 1; n < 8192*2; n*=2)
   {
     int N = n*n;
     std::cout << "N=" << N << std::endl; 
@@ -82,7 +82,7 @@ int main(void)
 
     t0 = std::chrono::high_resolution_clock::now();
     
-    int k = 32;
+    int k = 64;
     gpu_saxpy<<<(N+k)/k, k>>>(N, d_x, d_y, d_s);  
     cudaDeviceSynchronize();
     t1 = std::chrono::high_resolution_clock::now();
