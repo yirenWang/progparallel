@@ -16,11 +16,11 @@
 
 #define DEBUG 1
 
-void cpu_sobel(u_char **Source, u_char **Resultat, unsigned int height, unsigned int width, unsigned int nthreads) {
+void cpu_sobel(u_char **Source, unsigned long long *Resultat, unsigned int height, unsigned int width, unsigned int nthreads) {
 
-    for (auto i = 1; i < height; i++) {
-        for (auto j = 1; j < width; j++) {
-            Resultat[Source[i][j]]  += 1;
+    for (auto i = 0; i < height; i++) {
+        for (auto j = 0; j < width; j++) {
+            Resultat[(unsigned int)Source[i][j]]  += 1;
         }
     }
 }
@@ -34,14 +34,14 @@ int main(int argc, char* argv[]) {
 
     get_source_params(image_filename, &height, &width);
     std::cout << width << " " << height << std::endl;
-    u_char **Source, **Resultat, **ResultatGPU, **ResultatGPUShared;
-    u_char *d_ResultatGPUShared, *d_ResultatGPU, *d_Source;
+    u_char **Source, *d_Source;
+    unsigned long long *Resultat, *ResultatGPU, *ResultatGPUShared, *d_ResultatGPUShared, *d_ResultatGPU;
+
 
 	image<u_char> imgSource(height, width, &Source);
-    image<u_char> imgResultat(height, width, &Resultat);
-    image<u_char> imgResultatGPU(height, width, &ResultatGPU);
-    image<u_char> imgResultatGPUShared(height, width, &ResultatGPUShared);
-    
+    Resultat = (unsigned long long *)malloc(256*sizeof(unsigned long long));    
+    ResultatGPU = (unsigned long long *)malloc(256*sizeof(unsigned long long));    
+    ResultatGPUShared = (unsigned long long *)malloc(256*sizeof(unsigned long long));    
        
     auto fail = init_source_image(Source, image_filename, height, width);
     if (fail) {
@@ -50,8 +50,8 @@ int main(int argc, char* argv[]) {
     }
  
     cudaMalloc(&d_Source, height*width*sizeof(u_char));    
-    cudaMalloc(&d_ResultatGPU, height*width*sizeof(u_char));    
-    cudaMalloc(&d_ResultatGPUShared, height*width*sizeof(u_char));    
+    cudaMalloc(&d_ResultatGPU, 256*sizeof(unsigned long long));    
+    cudaMalloc(&d_ResultatGPUShared, 256*sizeof(unsigned long long));    
 
     std::chrono::high_resolution_clock::time_point t_mc0 = std::chrono::high_resolution_clock::now();
 
@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
     for (auto it =0; it < ITER; it++) {
         cpu_sobel(Source, Resultat, height, width, nthreads);
     }
+
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     auto cpu_duration = std::chrono::duration<double>(t1-t0).count()/ITER;
 
@@ -80,34 +81,28 @@ int main(int argc, char* argv[]) {
 
     std::chrono::high_resolution_clock::time_point t_mc2 = std::chrono::high_resolution_clock::now();
 
-    cudaMemcpy(ResultatGPU[0], d_ResultatGPU, height*width*sizeof(u_char), cudaMemcpyDeviceToHost);
+    cudaMemcpy(ResultatGPU, d_ResultatGPU, 256*sizeof(unsigned long long), cudaMemcpyDeviceToHost);
     
     std::chrono::high_resolution_clock::time_point t_mc3 = std::chrono::high_resolution_clock::now();
 
     auto gpu_mem_copy_duration = std::chrono::duration<double>(t_mc3-t_mc2 + t_mc1 - t_mc0).count()/ITER;
 
-    dim3 blocks2(width/(BLOCKDIM_X),height/(BLOCKDIM_Y));
-    // dim3 blocks2(2,2);
+    dim3 blocks2(width/(BLOCKDIM_X)+1,height/(BLOCKDIM_Y)+1);
+    dim3 threads2(16,16);
     t0 = std::chrono::high_resolution_clock::now();
     for (auto it =0; it < ITER; it++) {
-        gpu_sobel_shared<<<blocks2,threads>>>(d_Source, d_ResultatGPUShared, height, width);
+        gpu_sobel_shared<<<blocks2,threads2>>>(d_Source, d_ResultatGPUShared, height, width);
         cudaDeviceSynchronize();
     }
     t1 = std::chrono::high_resolution_clock::now();
     auto gpu_duration_shared = std::chrono::duration<double>(t1-t0).count()/ITER;
 
-    cudaMemcpy(ResultatGPUShared[0], d_ResultatGPUShared, height*width*sizeof(u_char), cudaMemcpyDeviceToHost);
+    cudaMemcpy(ResultatGPUShared, d_ResultatGPUShared, 256*sizeof(unsigned long long), cudaMemcpyDeviceToHost);
 
     std::cout << cpu_duration << " "  << gpu_duration << " "  << gpu_duration_shared << " " << gpu_mem_copy_duration << std::endl;
-
-    #ifdef DEBUG
-        image_filename=std::string("images/Resultats/Sobel_cpu.pgm");
-        save_gray_level_image(&imgResultat, image_filename, height, width);
-        image_filename=std::string("images/Resultats/Sobel_gpu.pgm");
-        save_gray_level_image(&imgResultatGPU, image_filename, height, width);
-        image_filename=std::string("images/Resultats/Sobel_gpu_shared.pgm");
-        save_gray_level_image(&imgResultatGPUShared, image_filename, height, width);
-    #endif
+    std::cout << ResultatGPU[0] << " " << ResultatGPU[255] << std::endl;
+    std::cout << ResultatGPUShared[0] << " " << ResultatGPUShared[255] << std::endl;
+    std::cout << Resultat[0] << " " << Resultat[255] << std::endl;
     
     return 0;
 }
