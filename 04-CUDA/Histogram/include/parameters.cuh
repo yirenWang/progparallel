@@ -1,2 +1,2 @@
-#define BLOCKDIM_X 16
-#define BLOCKDIM_Y 16
+#define BLOCKDIM_X 20
+#define BLOCKDIM_Y 20

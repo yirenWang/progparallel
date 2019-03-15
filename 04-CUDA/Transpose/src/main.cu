@@ -87,10 +87,10 @@ int main(int argc, char* argv[]) {
     auto gpu_mem_copy_duration = std::chrono::duration<double>(t_mc3-t_mc2 + t_mc1 - t_mc0).count()/ITER;
 
     dim3 blocks2(width/(BLOCKDIM_X),height/(BLOCKDIM_Y));
-    // dim3 blocks2(2,2);
+    dim3 threads2(32,8);
     t0 = std::chrono::high_resolution_clock::now();
     for (auto it =0; it < ITER; it++) {
-        gpu_sobel_shared<<<blocks2,threads>>>(d_Source, d_ResultatGPUShared, height, width);
+        gpu_sobel_shared<<<blocks2, threads2>>>(d_Source, d_ResultatGPUShared, height, width);
         cudaDeviceSynchronize();
     }
     t1 = std::chrono::high_resolution_clock::now();

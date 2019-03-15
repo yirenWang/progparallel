@@ -44,3 +44,13 @@ cpu_duration << " "  << gpu_duration << " "  << gpu_duration_shared << " " << gp
 0.143719 1.89142e-06 1.545e-06 0.000107033
 2048 2048
 0.0565225 1.81206e-06 1.56278e-06 4.34227e-05
+#define BLOCKDIM_X 8
+#define BLOCKDIM_Y 8
+#define BLOCKDIM_X 16
+#define BLOCKDIM_Y 16
+#define BLOCKDIM_X 32
+#define BLOCKDIM_Y 32
+#define BLOCKDIM_X 48
+#define BLOCKDIM_Y 48
+#define BLOCKDIM_X 64
+#define BLOCKDIM_Y 64

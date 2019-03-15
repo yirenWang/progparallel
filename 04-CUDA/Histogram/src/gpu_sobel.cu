@@ -15,7 +15,7 @@ __global__ void gpu_sobel(u_char *Source, unsigned long long *Resultat, unsigned
 __global__ void gpu_sobel_shared(u_char *Source, unsigned long long *Resultat, unsigned int height, unsigned int width) {
     
     // size of block fixed to be 16 * 16 = 256
-    __shared__ unsigned long long resultat_local[256];
+    __shared__ unsigned int resultat_local[256];
     
     int x = threadIdx.x;
     int y = threadIdx.y;
