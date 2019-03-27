@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     auto cpu_duration = std::chrono::duration<double>(t1-t0).count()/ITER;
 
     dim3 threads(BLOCKDIM_X,BLOCKDIM_Y);
-    dim3 blocks(width/BLOCKDIM_X,height/BLOCKDIM_Y);
+    dim3 blocks(width/BLOCKDIM_X + 1,height/BLOCKDIM_Y + 1);
     t0 = std::chrono::high_resolution_clock::now();
     for (auto it =0; it < ITER; it++) {
         gpu_sobel<<<blocks,threads>>>(d_Source, d_ResultatGPU, height, width);

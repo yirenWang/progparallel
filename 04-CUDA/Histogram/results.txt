@@ -4,7 +4,6 @@ with shared in unsigned long long (not a good idea ===> takes way too long)
 4000 2667
 0.0259447 0.0129359 0.0985123 0.000173771
 
-
 2048 2048
 0.0105453 0.00935989 0.170632 6.39349e-05
 

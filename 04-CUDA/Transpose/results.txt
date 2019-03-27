@@ -1,3 +1,5 @@
+std::cout << cpu_duration << " "  << gpu_duration << " "  << gpu_duration_shared << " " << gpu_mem_copy_duration << std::endl;
+
 #define BLOCKDIM_X 10
 #define BLOCKDIM_Y 10
 2048 2048
